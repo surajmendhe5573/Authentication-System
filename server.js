@@ -15,7 +15,6 @@ require('./config/db');
 app.use('/api/users', require('./routes/user'));
 
 
-
 app.listen(port, ()=>{
     console.log(`Server is running on http://localhost:${port}`);
     
