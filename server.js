@@ -7,7 +7,7 @@ app.use(express.json());
 const port= process.env.PORT || 5000;
 
 app.get('/', (req, res)=>{
-    res.send('Jai Shree Ram');
+    res.send('<h1>Welcome to the Backend Development</h1>');
 })
 
 require('./config/db');
