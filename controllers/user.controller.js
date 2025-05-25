@@ -73,5 +73,54 @@ const getAllUsers= async(req, res)=>{
     }
 };
 
+const updateUser= async(req, res)=>{
+    try {
+        const {name, email, password}= req.body;
+        const {id}= req.params;
 
-module.exports= {signUp, login, getAllUsers};
+        const updates= {};
+
+        if(name) updates.name= name;
+        if(email){
+            const userExist= await User.findOne({email});
+            if(userExist && userExist.id != id){
+                return res.status(409).json({message: 'This email is already taken by another user'});
+            }
+            updates.email= email;
+        }
+
+        if(password){
+            const hashedPassword= await bcrypt.hash(password, 10);
+            updates.password= hashedPassword;
+        }
+
+        const updateUser= await User.findByIdAndUpdate(id, updates, {new:true});
+        if(!updateUser){
+            return res.status(404).json({message: 'User not found'});
+        }
+
+        res.status(200).json({message: 'User updates successfully', user:updateUser});
+        
+    } catch (error) {
+        return res.status(500).json({message: 'Internal server error'});
+    }
+};
+
+const deleteUser= async(req, res)=>{
+    try {
+        const {id}= req.params;
+
+        const deleteUser= await User.findByIdAndDelete(id);
+        if(!deleteUser){
+            return res.status(404).json({message: 'User not found'});
+        }
+
+        res.status(200).json({message: 'User deleted successfully'});
+
+    } catch (error) {
+      return res.status(500).json({message: 'Internal server error'});  
+    }
+};
+
+
+module.exports= {signUp, login, getAllUsers, updateUser, deleteUser};
